@@ -30,6 +30,9 @@ variables:
     -DENABLE_DOCS=NO
     -DENABLE_NASM=YES
     -DBUILD_SHARED_LIBS=YES
+    -DENABLE_EXAMPLES=NO
+    -DENABLE_TESTDATA=NO
+    -DENABLE_TESTS=NO
     %{arch-options}
 
 config:
