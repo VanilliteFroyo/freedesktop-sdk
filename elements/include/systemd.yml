@@ -4,5 +4,5 @@ sources:
   track: v*
   exclude:
   - '*rc*'
-  ref: v259.5-0-gb3d8fc43e9cb531d958c17ef2cd93b374bc14e8a
+  ref: v260-0-g3e52279684a53ebf84d1d73d528bf400c5fb3497
   version-guess-pattern: '(\d+)(?:\.(\d+))?'
