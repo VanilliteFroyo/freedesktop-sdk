@@ -72,7 +72,26 @@ stages:
   - reproducible
 
 before_script:
-  - ulimit -n 1048576
+  - |
+    target="1048576"
+    soft="$(ulimit -Sn)"
+    hard="$(ulimit -Hn)"
+    nr_open="$(cat /proc/sys/fs/nr_open 2>/dev/null)"
+
+    echo "soft=$soft hard=$hard nr_open=${nr_open:-unknown}"
+
+    if [ "$(id -u)" -eq 0 ]; then
+        desired=${nr_open:+$(( target < nr_open ? target : nr_open ))}
+        desired=${desired:-$target}
+        if [ "$hard" -lt "$desired" ] && ulimit -Hn "$desired" 2>/dev/null; then
+            hard=$desired
+        fi
+    fi
+
+    [ "$soft" -lt "$hard" ] && ulimit -n "$hard"
+
+    echo "soft=$(ulimit -Sn) hard=$(ulimit -Hn)"
+
   - export PATH=~/.local/bin:${PATH}
   - |
     if cp --reflink=always README.md .reflink-test; then
