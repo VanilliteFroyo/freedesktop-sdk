@@ -5,6 +5,7 @@ build-depends:
 - vm/boot/efi/deps.bst
 - vm/boot/efi/initial-scripts.bst
 - vm/prepare-image.bst
+- components/binutils.bst
 
 variables:
   uuidnamespace: df2427db-01ec-4c99-96b1-be3edb3cd9f6
@@ -29,8 +30,7 @@ config:
   - mkdir -p /tmp
   - mkdir -p /var/tmp
   - mkdir -p /boot
-  - |
-    prepare-image.sh --sysroot / --rootpasswd root \
+  - prepare-image.sh --sysroot / --rootpasswd root \
                      --seed "%{uuidnamespace}" >/tmp/vars
 
   - dbus-uuidgen >/etc/machine-id
@@ -51,14 +51,11 @@ config:
     version="$(ls -1 /lib/modules | head -n1)"
     dracut -v --xz --reproducible --fstab \
            --no-machineid \
+           --uefi "%{install-root}/EFI/Linux/freedesktopsdk.efi" \
            --kernel-image "/lib/modules/${version}/vmlinuz" \
            --kver ${version} \
            --kernel-cmdline "rw console=tty0 console=ttyS0 quiet root=UUID=${uuid_root}" \
            --install 'fsck.ext4'
-
-  - |
-    version="$(ls -1 /lib/modules | head -n1)"
-    cp "/lib/modules/${version}/vmlinuz" /boot
 
   - |
     . /tmp/vars
@@ -66,6 +63,5 @@ config:
     title Freedesktop SDK
     version 1
     options rw console=tty0 console=ttyS0 root=UUID=${uuid_root}
-    linux /vmlinuz
-    initrd /initramfs-$(ls -1 /lib/modules | head -n1).img
+    efi /EFI/Linux/freedesktopsdk.efi
     EOF
