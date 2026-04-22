@@ -20,6 +20,7 @@ import asyncio
 import asyncio.subprocess
 import logging
 import os
+import shlex
 import signal
 import subprocess
 import sys
@@ -50,7 +51,7 @@ def build_qemu_image_command(args):
 
 
 def build_command(args):
-    return args.command.split()
+    return shlex.split(args.command)
 
 
 def argument_parser(description, dialogs):
@@ -112,7 +113,9 @@ async def run_test(command, dialog):
             assert prompt is not None
             if dialog:
                 process.stdin.write(dialog.pop(0).encode("ascii") + b"\n")
+                await process.stdin.drain()
 
+        process.stdin.close()
         logger.info("Test successful")
         success = True
     finally:
@@ -123,7 +126,6 @@ async def run_test(command, dialog):
                 pass
 
             await process.communicate()
-            await process.wait()
 
     return success
 
