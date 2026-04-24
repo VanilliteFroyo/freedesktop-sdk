@@ -49,7 +49,7 @@ Now that the build is finally done, you get to export the built files to a flatp
 
 Just run `bst artifact checkout flatpak-release-repo.bst --directory repo`
 
-Now there's a `repo` folder that you can add as a flatpak source with `flatpak remote-add --user --no-gpg-verify ps4mesa repo`
+Now there's a `repo` folder that you can copy to your PS4 and add as a flatpak source with `flatpak remote-add --user --no-gpg-verify ps4mesa repo`
 
 Then it's pretty easy to install the patched mesa files by running `flatpak install --user ps4mesa org.freedesktop.Platform.GL.default`
 You probably want both `25.08` and `25.08-extra`.
