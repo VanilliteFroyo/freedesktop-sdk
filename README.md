@@ -26,3 +26,33 @@ groups, and we would like to take a moment to thank them:
 - [Codethink](https://www.codethink.co.uk/), for assigning some of their engineers' time to this project.
 - [OSU Open Source Lab](https://osuosl.org/) for the x86 runners.
 - [Equinix (formerly packet)](https://www.equinix.com/) for the aarch64 runners.
+
+## Building with buildstream (cause it's weird)
+
+First you need to [install buildstream.](https://buildstream.build/install.html)
+
+On Arch I also needed to install `python-tomlkit`. You might need to install other things as well, my system already had a lot of build tools and whatnot.
+
+Now you can actually build. Get ready, because this is going to use at least 20GB of storage :)
+
+When I did it, I just ran `make` and it worked. `¯\_(ツ)_/¯`
+
+I probably could have set 
+```
+MAKE_OPTS="-j`nproc`"
+```
+but whatever.
+
+Hope you're okay with leaving your machine running for a while, cause this took 3 hours and 20 minutes on a machine that takes ~20 minutes to compile a fully featured linux kernel (With ThinLTO) for the PS4. 3 hours of that was apparently just downloading??? The 20 minutes was the actual build.
+
+Now that the build is finally done, you get to export the built files to a flatpak repository. Don't worry, it's easy.
+
+Just run `bst artifact checkout flatpak-release-repo.bst --directory repo`
+
+Now there's a `repo` folder that you can add as a flatpak source with `flatpak remote-add --user --no-gpg-verify ps4mesa repo`
+
+Then it's pretty easy to install the patched mesa files by running `flatpak install --user ps4mesa org.freedesktop.Platform.GL.default`
+You probably want both `25.08` and `25.08-extra`.
+
+Flatpak will probably complain that you already have org.freedesktop.Platform.GL.default installed. It's fine, just remove the flathub one and then installed the patched one. It (probably) won't make you uninstall all your flatpak apps :) 
+## I am not responsible if it uninstalls your apps btw.
